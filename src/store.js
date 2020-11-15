@@ -7,6 +7,8 @@ const SELECTED_CATEGORY = "SELECTED_CATEGORY";
 const CREATED_NEW_CART = "CREATED_NEW_CART";
 const ADDED_ITEM = "ADDED_ITEM";
 const CHANGED_ITEM_QUANTITY = "CHANGED_ITEM_QUANTITY"
+const STARTED_TIMER = "STARTED_TIMER"
+const CLEAR_TIMER = "CLEAR_TIMER"
 
 export const changeItemQuantity = (itemId, operator) => {
     return {
@@ -23,6 +25,19 @@ export const selectCategory = (categoryId) => {
   };
 };
 
+export const startTimer = (endTime) => {
+  return {
+    type: STARTED_TIMER,
+    endTime
+  }
+}
+
+export const clearTimer = () => {
+  return {
+    type: CLEAR_TIMER
+  }
+}
+
 export const addItem = (itemId) => {
   return {
     type: ADDED_ITEM,
@@ -31,9 +46,7 @@ export const addItem = (itemId) => {
 };
 
 export const createNewCart = () => {
-  let cart = {
-    items: [],
-  };
+  let cart = []
 
   return {
     type: CREATED_NEW_CART,
@@ -69,6 +82,7 @@ const initialState = {
   cart: [],
   page: 0,
   totalPages: 0,
+  endTime: -1,
 };
 
 const appReducer = (state = initialState, action) => {
@@ -125,6 +139,17 @@ const appReducer = (state = initialState, action) => {
                     return newCart
                 }
             }, [])]
+        }
+
+    case STARTED_TIMER: 
+        return {
+          ...state,
+          endTime: action.endTime
+        }
+    case CLEAR_TIMER:
+        return {
+          ...state,
+          endTime: -1
         }
     default:
       return state;

@@ -7,13 +7,13 @@ export const Shop = (props) => {
     <div>
       <header className="header">
         <span>Shop 4 all things</span>
-        <span onClick={() => props.selectScreen("checkout")}>
-                Go to Carter
-        </span>
+        <span onClick={() => props.selectScreen("checkout")}>Go to Carter</span>
       </header>
 
       <div>
-        <select onChange={(e) => props.selectCategory(parseInt(e.target.value,10))}>
+        <select
+          onChange={(e) => props.selectCategory(parseInt(e.target.value, 10))}
+        >
           <option value={-1}>Filter by Category</option>
           {props.categories.map((category) => {
             return (
@@ -27,11 +27,31 @@ export const Shop = (props) => {
 
       <div>
         <h3>Our Products</h3>
-        {(props.selectedCategory === -1) ? props.items.map((item) => {
-          return <ItemCard addItem={props.addItem} key={item.id} item={item} cart={props.cart} />;
-        }) : props.items.filter(i => i.idCategory === props.selectedCategory).map((item) => {
-          return <ItemCard addItem={props.addItem} key={item.id} item={item} cart={props.cart} />;
-        })}
+        {props.selectedCategory === -1
+          ? props.items.map((item) => {
+              return (
+                <ItemCard
+                  initializeClock={props.initializeClock}
+                  addItem={props.addItem}
+                  key={item.id}
+                  item={item}
+                  cart={props.cart}
+                />
+              );
+            })
+          : props.items
+              .filter((i) => i.idCategory === props.selectedCategory)
+              .map((item) => {
+                return (
+                  <ItemCard
+                    initializeClock={props.initializeClock}
+                    addItem={props.addItem}
+                    key={item.id}
+                    item={item}
+                    cart={props.cart}
+                  />
+                );
+              })}
       </div>
     </div>
   );
@@ -45,7 +65,18 @@ const ItemCard = (props) => {
       {props.cart.find((item) => item.itemId === props.item.id) ? (
         <span>Item already added to cart!</span>
       ) : (
-        <button onClick={() => props.addItem(props.item.id)}>Add to Cart</button>
+        <button
+          onClick={function () {
+            if (props.cart.length === 0) {// if the cart is empty, then we need to start the timer
+              props.initializeClock();
+              props.addItem(props.item.id);
+            } else {
+              props.addItem(props.item.id);
+            }
+          }}
+        >
+          Add to Cart
+        </button>
       )}
     </div>
   );
