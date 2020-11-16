@@ -66,7 +66,7 @@ export class App extends Component {
   render() {
     return (
       <Bouncer>
-        <div className="App">
+        <div className="app">
           <CSSTransition
             in={this.state.screen === "shop"}
             timeout={500}

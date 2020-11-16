@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
-import { changeItemQuantity, createNewCart } from "../store";
+import { changeItemQuantity, createNewCart, getItems } from "../store";
 import Modal from "react-modal";
 
 const modalStyle = {
@@ -9,7 +9,7 @@ const modalStyle = {
     height: "fit-content",
     opacity: "100%",
     position: "absolute",
-    backgroundColor: "#353535",
+    backgroundColor: "white",
     borderRadius: "10px",
   },
 };
@@ -17,6 +17,13 @@ const modalStyle = {
 Modal.setAppElement(document.getElementById("root"));
 
 export const Checkout = (props) => {
+  
+  let getItems = props.getItems  
+  
+  useEffect(() => {
+    getItems();
+  }, [getItems]);
+
   const [modalOpen, toggleModal] = useState(false);
 
   const [goingBack, goBack] = useState(false);
@@ -26,14 +33,14 @@ export const Checkout = (props) => {
 
     props.createNewCart();
 
-    goBack(true)
+    goBack(true);
 
     setTimeout(() => {
       props.selectScreen("shop");
     }, 360);
   };
 
-  const {getTimeRemaining} = props
+  const { getTimeRemaining } = props;
 
   return (
     <div>
@@ -66,7 +73,10 @@ export const Checkout = (props) => {
 
           {props.cart.length ? (
             <div>
-              <TimerCard endTime={props.endTime} getTimeRemaining={getTimeRemaining}/>
+              <TimerCard
+                endTime={props.endTime}
+                getTimeRemaining={getTimeRemaining}
+              />
               <div>
                 {props.cart.map((item) => {
                   return (
@@ -103,21 +113,28 @@ export const Checkout = (props) => {
 };
 
 const TimerCard = (props) => {
-    const [minutes, setMinutes] = useState(0)
+  const [minutes, setMinutes] = useState(0);
 
-    const [seconds, setSeconds] = useState(0)
+  const [seconds, setSeconds] = useState(0);
 
-    useEffect(() => {
-        let timer = setTimeout(() => {
-            let {minutes,seconds} = props.getTimeRemaining(props.endTime);
+  useEffect(() => {
+    let timer = setTimeout(() => {
+      let { minutes, seconds } = props.getTimeRemaining(props.endTime);
 
-            setMinutes(minutes);
-            setSeconds(seconds);
-        }, 1000)
-        return () => clearTimeout(timer)
-      })
-    
-    return <p>{`00:${minutes}:${seconds}`} time remaining</p>;
+      setMinutes(minutes);
+      setSeconds(seconds);
+    }, 1000);
+    return () => clearTimeout(timer);
+  });
+
+  return (
+    <p>
+      {`00:${minutes < 10 ? "0" + minutes : minutes}:${
+        seconds < 10 ? "0" + seconds : seconds
+      }`}{" "}
+      time remaining
+    </p>
+  );
 };
 
 const CheckoutItemCard = (props) => {
@@ -166,6 +183,7 @@ const mapDispatchToProps = (dispatch) => ({
   changeItemQuantity: (itemId, operator) =>
     dispatch(changeItemQuantity(itemId, operator)),
   createNewCart: () => dispatch(createNewCart()),
+  getItems: () => dispatch(getItems()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Checkout);
