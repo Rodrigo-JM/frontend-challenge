@@ -152,10 +152,18 @@ body {
 .checkout-container .items-card:last-child {
   border-bottom: 1px solid black;
 }
+.checkout-container .items-card:nth-last-child(2) {
+  border-bottom: 0px;
+}
 
 .items-card:nth-child(7) {
   border-bottom: 1px solid black;
 }
+
+.items-card:nth-last-child(2) {
+  border-bottom: 1px solid black;
+}
+
 
 .items-card > span {
   width: 33%;
@@ -300,9 +308,6 @@ body {
 .menu-secondary-enter-active {
   transform: translateX(0%);
   transition: all 500ms ease;
-}
-
-.menu-secondary-exit {
 }
 
 .menu-secondary-exit-active {
