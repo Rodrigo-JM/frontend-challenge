@@ -143,7 +143,7 @@ const appReducer = (state = initialState, action) => {
     case ADDED_ITEM:
       return {
         ...state,
-        cart: [...state.cart, { itemId: action.itemId, qt: 1 }],
+        cart: [...state.cart, { itemId: action.itemId, qt: 1, itemName: state.items.find((i) => i.id === action.itemId)["name"] }],
       };
 
     case CHANGE_PAGE:

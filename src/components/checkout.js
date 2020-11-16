@@ -5,21 +5,23 @@ import Modal from "react-modal";
 
 const modalStyle = {
   content: {
-    width: "560px",
-    height: "fit-content",
+    height: "55%",
+    maxWidth: "600px",
     opacity: "100%",
     position: "absolute",
+    margin: "auto",
     backgroundColor: "white",
     borderRadius: "10px",
+    display: "grid",
+    placeItems: "center",
   },
 };
 
 Modal.setAppElement(document.getElementById("root"));
 
 export const Checkout = (props) => {
-  
-  let getItems = props.getItems  
-  
+  let getItems = props.getItems;
+
   useEffect(() => {
     getItems();
   }, [getItems]);
@@ -43,79 +45,92 @@ export const Checkout = (props) => {
   const { getTimeRemaining } = props;
 
   return (
-    <div>
-      <div>
-        <span onClick={() => props.selectScreen("shop")}>Go to Shop</span>
+    props.selectedCategory === -1 && (
+      <div className="main">
         <header className="header">
-          <span>Shop 4 all things</span>
+          <span onClick={() => props.selectScreen("shop")}>
+            <img className="cart-icon" src="./back-arrow.png" />
+          </span>
+          <span>
+            <span className="logo">Shop4allthings</span>
+          </span>
+          <span></span>
         </header>
-      </div>
 
-      <Modal
-        isOpen={modalOpen}
-        style={modalStyle}
-        transparent={true}
-        onRequestClose={() => checkoutOrder()}
-      >
-        <div>
-          <h2>Thank you for you purchase</h2>
-          <button onClick={() => checkoutOrder()}>Close</button>
-        </div>
-      </Modal>
+        <Modal
+          isOpen={modalOpen}
+          style={modalStyle}
+          transparent={true}
+          onRequestClose={() => checkoutOrder()}
+        >
+          <div className="confirmation-modal">
+            <img className="qtd-icon" src="./confirmation.png" />
+            <h2>Thank you for you purchase</h2>
+            <button onClick={() => checkoutOrder()}>Close</button>
+          </div>
+        </Modal>
 
-      {goingBack ? (
-        <div>
-          <h2>Redirecting to store...</h2>
-        </div>
-      ) : (
-        <div>
-          <h2> Checkout your order </h2>
+        {goingBack ? (
+          <div>
+            <h2>Redirecting to store...</h2>
+          </div>
+        ) : (
+          <div className="checkout-container">
+            <h2> Checkout your order </h2>
 
-          {props.cart.length ? (
-            <div>
-              <TimerCard
-                endTime={props.endTime}
-                getTimeRemaining={getTimeRemaining}
-              />
-              <div>
-                {props.cart.map((item) => {
-                  return (
-                    <CheckoutItemCard
-                      items={props.items}
-                      key={item.itemId}
-                      item={item}
-                      changeItemQuantity={props.changeItemQuantity}
-                    />
-                  );
-                })}
-                <div>
-                  <span>Total</span>
+            {props.cart.length ? (
+              <div className="checkout-items">
+                <TimerCard
+                  endTime={props.endTime}
+                  getTimeRemaining={getTimeRemaining}
+                />
+                <div className="checkout-items-list">
+                  {props.cart.map((item) => {
+                    return (
+                      <CheckoutItemCard
+                        items={props.items}
+                        key={item.itemId}
+                        item={item}
+                        changeItemQuantity={props.changeItemQuantity}
+                      />
+                    );
+                  })}
+                </div>
+                <div className="total">
+                  <span>Total:</span>
                   <span>
                     R$ {calculateTotalCart(props.cart, props.items).toFixed(2)}
                   </span>
                 </div>
-              </div>
 
-              <button onClick={() => toggleModal(true)}>Checkout Order</button>
-            </div>
-          ) : (
-            <div>
-              <h4>You don't have any items in your cart!</h4>
-              <button onClick={() => props.selectScreen("shop")}>
-                Go back to the store
-              </button>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+                <button
+                  className="checkout-btn"
+                  onClick={() => toggleModal(true)}
+                >
+                  Checkout Order
+                </button>
+              </div>
+            ) : (
+              <div className="no-items">
+                <h4>You don't have any items in your cart!</h4>
+                <button onClick={() => props.selectScreen("shop")}>
+                  Go back to the store
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    )
   );
 };
 
 const TimerCard = (props) => {
-  const [minutes, setMinutes] = useState(0);
+  let time = props.getTimeRemaining(props.endTime)
 
-  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(time.minutes);
+
+  const [seconds, setSeconds] = useState(time.seconds);
 
   useEffect(() => {
     let timer = setTimeout(() => {
@@ -138,28 +153,31 @@ const TimerCard = (props) => {
 };
 
 const CheckoutItemCard = (props) => {
-  const { name } = getItem(props.item.itemId, props.items);
+  const { name, price } = getItem(props.item.itemId, props.items);
 
   return (
-    <div>
-      <div>
+    <div className="items-card">
+      <div className="qtd-container">
         <span
+          className="qtd-btn"
           onClick={() =>
             props.changeItemQuantity(props.item.itemId, "decrease")
           }
         >
-          ------------
+          <img className="qtd-icon" src="./minus.png" />
         </span>
         <span>{props.item.qt}</span>
         <span
+          className="qtd-btn"
           onClick={() =>
             props.changeItemQuantity(props.item.itemId, "increase")
           }
         >
-          ++++++++++++
+          <img className="qtd-icon" src="./plus.png" />
         </span>
       </div>
       <span>{name}</span>
+      <span>{`$${price.toFixed(2)}`}</span>
     </div>
   );
 };

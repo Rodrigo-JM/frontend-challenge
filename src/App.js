@@ -24,7 +24,7 @@ export class App extends Component {
 
   initializeClock() {
     const oldDate = new Date();
-    const endtime = new Date(oldDate.getTime() + 1 * 60000);
+    const endtime = new Date(oldDate.getTime() + 15 * 60000);
 
     this.props.startTimer(endtime)
 

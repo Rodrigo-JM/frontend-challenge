@@ -6,17 +6,28 @@ export const Shop = (props) => {
   return (
     <div className="main">
       <header className="header">
-        <span>Shop 4 all things</span>
-        <span onClick={() => props.selectScreen("checkout")}>
-          <span>{getCartTotalItems(props.cart)}</span>
-          <span className="cart">
-            CART
-            <HoverList items={props.items} cart={props.cart} />
+        <span></span>
+        <span className="logo">Shop4allthings</span>
+        <span className="cart" onClick={() => props.selectScreen("checkout")}>
+          <span>
+            <img className="cart-icon" src="./cart.png" />
+            {props.cart.length ? (
+              <HoverList items={props.items} cart={props.cart} />
+            ) : (
+              ""
+            )}
           </span>
+          {props.cart.length ? (
+            <span className="items-on-cart">
+              {getCartTotalItems(props.cart)}
+            </span>
+          ) : (
+            ""
+          )}
         </span>
       </header>
 
-      <div>
+      <div className="select-category">
         <select
           onChange={(e) =>
             parseInt(e.target.value, 10) === -1
@@ -35,8 +46,7 @@ export const Shop = (props) => {
         </select>
       </div>
 
-      <div>
-        <h3>Our Products</h3>
+      <div className="items-container">
         {props.items
           .map((item) => {
             return (
@@ -65,11 +75,10 @@ const HoverList = (props) => {
   return (
     <div className="hover-list">
       {props.cart.map((i) => {
-        let item = getItem(i.itemId, props.items);
         return (
-          <h6 key={i.itemId}>
-            <span>{item.name}</span> qtd: <span>{i.qt}</span>
-          </h6>
+          <div key={i.itemId}>
+            <span>{i.itemName}</span> <span>qtd: {i.qt}</span>
+          </div>
         );
       })}
     </div>
@@ -82,9 +91,14 @@ const getItem = (itemId, items) => {
 
 const ItemCard = (props) => {
   return (
-    <div>
-      <span>{props.item.name}</span>
-      <span>{props.item.price}</span>
+    <div className="items-card">
+      <span className="item-name">{props.item.name}</span>
+      <span>
+        {" "}
+        {props.cart.find((item) => item.itemId === props.item.id)
+          ? ``
+          : `$${props.item.price.toFixed(2)}`}
+      </span>
       {props.cart.find((item) => item.itemId === props.item.id) ? (
         <span>Item already added to cart!</span>
       ) : (
